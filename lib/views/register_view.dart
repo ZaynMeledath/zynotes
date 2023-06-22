@@ -57,7 +57,6 @@ class _RegisterViewState extends State<RegisterView> {
                   onPressed: () async {
                     final email = _email.text;
                     final password = _password.text;
-                    final user = FirebaseAuth.instance.currentUser;
                     showDialog(
                         context: context,
                         builder: (context) =>
@@ -65,25 +64,47 @@ class _RegisterViewState extends State<RegisterView> {
                     try {
                       await FirebaseAuth.instance
                           .createUserWithEmailAndPassword(
-                              email: email, password: password)
-                          .then((value) => FirebaseAuth.instance
-                              .signInWithEmailAndPassword(
-                                  email: email, password: password))
-                          .then((value) => user?.sendEmailVerification())
-                          .then((value) => Navigator.of(context)
+                            email: email,
+                            password: password,
+                          )
+                          .then((value) =>
+                              FirebaseAuth.instance.signInWithEmailAndPassword(
+                                email: email,
+                                password: password,
+                              ))
+                          .then((value) {
+                        final user = FirebaseAuth.instance.currentUser;
+                        user?.sendEmailVerification();
+                      }).then((value) => Navigator.of(context)
                               .pushNamedAndRemoveUntil(
-                                  loginview, (route) => false));
+                                  loginView, (route) => false));
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'weak-password') {
-                        await showErrorDialog(context, 'Weak Password');
+                        await showErrorDialog(
+                          context,
+                          'Weak Password',
+                        );
                       } else if (e.code == 'email-already-in-use') {
                         await showErrorDialog(
-                            context, 'Email is already in use');
+                          context,
+                          'Email is already in use',
+                        );
+                      } else if (e.code == 'invalid-email') {
+                        await showErrorDialog(
+                          context,
+                          'Please enter a valid email',
+                        );
                       } else {
-                        await showErrorDialog(context, 'Error: ${e.code}');
+                        await showErrorDialog(
+                          context,
+                          'Error: ${e.code}',
+                        );
                       }
                     } catch (e) {
-                      await showErrorDialog(context, e.toString());
+                      await showErrorDialog(
+                        context,
+                        e.toString(),
+                      );
                     }
                   },
                   child: const Text('Register'),
@@ -91,7 +112,7 @@ class _RegisterViewState extends State<RegisterView> {
                 TextButton(
                     onPressed: () {
                       Navigator.of(context)
-                          .pushNamedAndRemoveUntil(loginview, (route) => false);
+                          .pushNamedAndRemoveUntil(loginView, (route) => false);
                     },
                     child: const Text('Already have an account? Sign in'))
               ],

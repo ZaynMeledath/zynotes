@@ -13,10 +13,12 @@ class UserHome extends StatefulWidget {
 class _UserHomeState extends State<UserHome> {
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
         appBar: AppBar(
             backgroundColor: const Color.fromARGB(255, 14, 166, 241),
             title: const Text('Home Page'),
+            centerTitle: true,
             actions: [
               PopupMenuButton<MenuAction>(itemBuilder: (context) {
                 return const [
@@ -30,7 +32,7 @@ class _UserHomeState extends State<UserHome> {
                     if (shouldLogout) {
                       FirebaseAuth.instance.signOut();
                       Navigator.of(context)
-                          .pushNamedAndRemoveUntil(loginview, (route) => false);
+                          .pushNamedAndRemoveUntil(loginView, (route) => false);
                     }
                 }
               })
@@ -44,8 +46,7 @@ class _UserHomeState extends State<UserHome> {
                 const Text('WELCOME TO ZYNOTES'),
                 ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil(loginview, (route) => false);
+                      Navigator.of(context).pushNamed(loginView);
                     },
                     child: const Text('Login to another account'))
               ],
@@ -81,7 +82,7 @@ class _GuestHomeState extends State<GuestHome> {
                 ElevatedButton(
                     onPressed: () {
                       Navigator.of(context)
-                          .pushNamedAndRemoveUntil(loginview, (route) => false);
+                          .pushNamedAndRemoveUntil(loginView, (route) => false);
                     },
                     child: const Text('Login or Register'))
               ],

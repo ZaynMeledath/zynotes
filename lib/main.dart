@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
 import 'package:zynotes/views/login_view.dart';
 import 'package:zynotes/views/register_view.dart';
-import 'package:zynotes/views/user_guest_views.dart';
+import 'package:zynotes/views/user_guest_home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,9 +20,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: {
-        homepage: (context) => const HomePage(),
-        loginview: (context) => const LoginView(),
-        registerview: (context) => const RegisterView(),
+        homePage: (context) => const HomePage(),
+        loginView: (context) => const LoginView(),
+        registerView: (context) => const RegisterView(),
       },
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -37,13 +37,12 @@ class MyApp extends StatelessWidget {
 
 enum MenuAction { logout }
 
-final user = FirebaseAuth.instance.currentUser;
-
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       return const UserHome();
     } else {
@@ -62,14 +61,14 @@ Future<bool> showLogoutDialog(BuildContext context) {
           actions: [
             ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop(true);
+                  Navigator.of(context).pop(false);
                 },
-                child: const Text('Log Out')),
+                child: const Text('Cancel')),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop(false);
+                Navigator.of(context).pop(true);
               },
-              child: const Text('Cancel'),
+              child: const Text('Log Out'),
             ),
           ],
         );

@@ -18,22 +18,24 @@ class _VerifyEmailState extends State<VerifyEmail> {
     // }
     return Scaffold(
         appBar: AppBar(title: const Text('Verify Email'), centerTitle: true),
-        body: Column(
-          children: [
-            const Text('Click to verify'),
-            ElevatedButton(
-                onPressed: () {
-                  if (user == null) {
+        body: Center(
+          child: Column(
+            children: [
+              const Text('Click to verify'),
+              ElevatedButton(
+                  onPressed: () {
+                    if (user == null) {
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil(loginView, (route) => false);
+                    } else if (!user.emailVerified) {
+                      user.sendEmailVerification();
+                    }
                     Navigator.of(context)
-                        .pushNamedAndRemoveUntil(loginview, (route) => false);
-                  } else if (!user.emailVerified) {
-                    user.sendEmailVerification();
-                  }
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(loginview, (route) => false);
-                },
-                child: const Text('Login and verify')),
-          ],
+                        .pushNamedAndRemoveUntil(loginView, (route) => false);
+                  },
+                  child: const Text('Verify')),
+            ],
+          ),
         ));
   }
 }

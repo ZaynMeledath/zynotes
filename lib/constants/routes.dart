@@ -1,3 +1,3 @@
-const homepage = '/homepage';
-const loginview = '/loginview';
-const registerview = 'registerview';
+const homePage = '/homepage';
+const loginView = '/loginview';
+const registerView = 'registerview';

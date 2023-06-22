@@ -31,7 +31,6 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
         appBar: AppBar(
           backgroundColor: const Color.fromARGB(255, 14, 166, 241),
@@ -65,30 +64,44 @@ class _LoginViewState extends State<LoginView> {
                               child: CircularProgressIndicator(),
                             ));
                     try {
-                      await FirebaseAuth.instance
-                          .signInWithEmailAndPassword(
-                              email: email, password: password)
-                          .then((value) {
-                        if (user?.emailVerified ?? false) {
-                          Navigator.of(context).pushNamedAndRemoveUntil(
-                              homepage, (route) => false);
-                        } else {
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) => const VerifyEmail()),
-                              (route) => false);
-                        }
-                      });
+                      await FirebaseAuth.instance.signInWithEmailAndPassword(
+                        email: email,
+                        password: password,
+                      );
+                      final user = FirebaseAuth.instance.currentUser;
+                      if (user?.emailVerified ?? false) {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          homePage,
+                          (route) => false,
+                        );
+                      } else {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) => const VerifyEmail()),
+                        );
+                      }
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'user-not-found') {
-                        await showErrorDialog(context, 'Not a Registered User');
+                        await showErrorDialog(
+                          context,
+                          'Not a Registered User',
+                        );
                       } else if (e.code == 'wrong-password') {
-                        await showErrorDialog(context, 'Incorrect Password');
+                        await showErrorDialog(
+                          context,
+                          'Incorrect Password',
+                        );
                       } else {
-                        await showErrorDialog(context, 'Error: ${e.code}');
+                        await showErrorDialog(
+                          context,
+                          'Error: ${e.code}',
+                        );
                       }
                     } catch (e) {
-                      await showErrorDialog(context, e.toString());
+                      await showErrorDialog(
+                        context,
+                        e.toString(),
+                      );
                     }
                   },
                   child: const Text('Login'),
@@ -96,7 +109,7 @@ class _LoginViewState extends State<LoginView> {
                 TextButton(
                     onPressed: () {
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                          registerview, (route) => false);
+                          registerView, (route) => false);
                     },
                     child: const Text('Create an Account'))
               ],
