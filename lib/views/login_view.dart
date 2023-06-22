@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import '../firebase_options.dart';
+import 'package:zynotes/constants/routes.dart';
+import 'package:zynotes/utilities/show_error_dialog.dart';
+import 'package:zynotes/views/verify_email_view.dart';
+import 'dart:developer' as dev show log;
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -30,69 +32,75 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.lightBlue,
+          backgroundColor: const Color.fromARGB(255, 14, 166, 241),
           centerTitle: true,
           title: const Text('Login'),
         ),
-        body: FutureBuilder(
-          future: Firebase.initializeApp(
-              options: DefaultFirebaseOptions.currentPlatform),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                return Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 20),
-                    child: Column(
-                      children: [
-                        TextField(
-                          controller: _email,
-                          decoration:
-                              const InputDecoration(hintText: 'Enter Email'),
-                          autocorrect: false,
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                        TextField(
-                          controller: _password,
-                          decoration:
-                              const InputDecoration(hintText: 'Enter Password'),
-                          autocorrect: false,
-                          obscureText: true,
-                          enableSuggestions: false,
-                        ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            final email = _email.text;
-                            final password = _password.text;
-
-                            try {
-                              await FirebaseAuth.instance
-                                  .signInWithEmailAndPassword(
-                                      email: email, password: password);
-                              _email.text = '';
-                              _password.text = '';
-                            } on FirebaseAuthException catch (e) {
-                              if (e.code == 'user-not-found') {
-                                print('User Not Found');
-                              } else if (e.code == 'wrong-password') {
-                                print('Wrong Password');
-                              } else {
-                                print('SOMETHING WENT WRONG');
-                                print(e.code);
-                              }
-                            }
-                          },
-                          child: const Text('Login'),
-                        ),
-                      ],
-                    ));
-
-              default:
-                return const Text('Loading...');
-            }
-          },
-        ));
+        body: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            child: Column(
+              children: [
+                TextField(
+                  controller: _email,
+                  decoration: const InputDecoration(hintText: 'Enter Email'),
+                  autocorrect: false,
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                TextField(
+                  controller: _password,
+                  decoration: const InputDecoration(hintText: 'Enter Password'),
+                  autocorrect: false,
+                  obscureText: true,
+                  enableSuggestions: false,
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    final email = _email.text;
+                    final password = _password.text;
+                    showDialog(
+                        context: context,
+                        builder: (context) => const Center(
+                              child: CircularProgressIndicator(),
+                            ));
+                    try {
+                      await FirebaseAuth.instance
+                          .signInWithEmailAndPassword(
+                              email: email, password: password)
+                          .then((value) {
+                        if (user?.emailVerified ?? false) {
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                              homepage, (route) => false);
+                        } else {
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => const VerifyEmail()),
+                              (route) => false);
+                        }
+                      });
+                    } on FirebaseAuthException catch (e) {
+                      if (e.code == 'user-not-found') {
+                        await showErrorDialog(context, 'Not a Registered User');
+                      } else if (e.code == 'wrong-password') {
+                        await showErrorDialog(context, 'Incorrect Password');
+                      } else {
+                        await showErrorDialog(context, 'Error: ${e.code}');
+                      }
+                    } catch (e) {
+                      await showErrorDialog(context, e.toString());
+                    }
+                  },
+                  child: const Text('Login'),
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          registerview, (route) => false);
+                    },
+                    child: const Text('Create an Account'))
+              ],
+            )));
   }
 }
