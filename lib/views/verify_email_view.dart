@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
-import 'package:zynotes/main.dart';
 
 class VerifyEmail extends StatefulWidget {
   const VerifyEmail({super.key});
