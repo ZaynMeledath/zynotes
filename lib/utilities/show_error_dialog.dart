@@ -8,13 +8,14 @@ Future<void> showErrorDialog(
   return showDialog(
       context: context,
       builder: (context) {
-        return CupertinoAlertDialog(
+        return AlertDialog(
           title: const Text('An Error Occured'),
           content: Text(text),
           actions: [
             CupertinoButton(
               child: const Text('Dismiss'),
               onPressed: () {
+                Navigator.of(context).pop();
                 Navigator.of(context).pop();
               },
             )

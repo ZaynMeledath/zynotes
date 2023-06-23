@@ -6,6 +6,7 @@ import 'package:zynotes/constants/routes.dart';
 import 'package:zynotes/views/login_view.dart';
 import 'package:zynotes/views/register_view.dart';
 import 'package:zynotes/views/user_guest_home.dart';
+import 'package:zynotes/views/verify_email_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +45,11 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      return const UserHome();
+      if (user.emailVerified) {
+        return const UserHome();
+      } else {
+        return const VerifyEmail();
+      }
     } else {
       return const GuestHome();
     }

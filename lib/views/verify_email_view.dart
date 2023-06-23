@@ -21,7 +21,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
         body: Center(
           child: Column(
             children: [
-              const Text('Click to verify'),
+              Text('Click to verify your email ${user?.email}'),
               ElevatedButton(
                   onPressed: () {
                     if (user == null) {
@@ -34,6 +34,13 @@ class _VerifyEmailState extends State<VerifyEmail> {
                         .pushNamedAndRemoveUntil(loginView, (route) => false);
                   },
                   child: const Text('Verify')),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(loginView, (route) => false);
+                },
+                child: const Text('Login to another account'),
+              )
             ],
           ),
         ));
