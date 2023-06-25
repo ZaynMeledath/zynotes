@@ -1,10 +1,18 @@
 import 'package:zynotes/services/auth/auth_user.dart';
 import 'package:zynotes/services/auth/auth_provider.dart';
 import 'package:zynotes/services/auth/auth_exceptions.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:zynotes/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, FirebaseAuthException;
 
 class FirebaseAuthProvider implements AuthProvider {
+  @override
+  Future<void> initialize() async {
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform);
+  }
+
   @override
   AuthUser? get currentUser {
     final user = FirebaseAuth.instance.currentUser;
@@ -38,6 +46,8 @@ class FirebaseAuthProvider implements AuthProvider {
         throw EmailAlreadyInUseAuthException();
       } else if (e.code == 'invalid-email') {
         throw InvalidEmailAuthException();
+      } else if (e.code == 'network-request-failed') {
+        throw NetworkRequestFailedAuthException();
       } else {
         throw GenericAuthException();
       }
@@ -47,7 +57,7 @@ class FirebaseAuthProvider implements AuthProvider {
   }
 
   @override
-  Future<AuthUser> logIn({
+  Future<AuthUser> signIn({
     required String email,
     required String password,
   }) async {
@@ -67,6 +77,10 @@ class FirebaseAuthProvider implements AuthProvider {
         throw UserNotFoundAuthException();
       } else if (e.code == 'wrong-password') {
         throw WrongPasswordAuthException();
+      } else if (e.code == 'invalid-email') {
+        throw InvalidEmailAuthException();
+      } else if (e.code == 'network-request-failed') {
+        throw NetworkRequestFailedAuthException();
       } else {
         throw GenericAuthException();
       }
@@ -76,7 +90,7 @@ class FirebaseAuthProvider implements AuthProvider {
   }
 
   @override
-  Future<void> logOut() async {
+  Future<void> signOut() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       await FirebaseAuth.instance.signOut();

@@ -16,4 +16,6 @@ class UserNotLoggedInAuthException implements Exception {}
 
 // Generic Exceptions
 
+class NetworkRequestFailedAuthException implements Exception {}
+
 class GenericAuthException implements Exception {}

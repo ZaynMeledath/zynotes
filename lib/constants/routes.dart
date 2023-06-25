@@ -1,3 +1,4 @@
-const homePage = '/homepage';
-const loginView = '/loginview';
-const registerView = 'registerview';
+const homePage = '/homePage';
+const loginView = '/loginView';
+const registerView = '/registerView';
+const verifyEmail = '/verifyEmail';

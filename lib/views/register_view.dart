@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
+import 'package:zynotes/services/auth/auth_exceptions.dart';
+import 'package:zynotes/services/auth/auth_service.dart';
 import 'package:zynotes/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
@@ -62,48 +63,41 @@ class _RegisterViewState extends State<RegisterView> {
                         builder: (context) =>
                             const Center(child: CircularProgressIndicator()));
                     try {
-                      await FirebaseAuth.instance
-                          .createUserWithEmailAndPassword(
-                            email: email,
-                            password: password,
-                          )
-                          .then((value) =>
-                              FirebaseAuth.instance.signInWithEmailAndPassword(
-                                email: email,
-                                password: password,
-                              ))
-                          .then((value) {
-                        final user = FirebaseAuth.instance.currentUser;
-                        user?.sendEmailVerification();
-                      }).then((value) => Navigator.of(context)
-                              .pushNamedAndRemoveUntil(
-                                  loginView, (route) => false));
-                    } on FirebaseAuthException catch (e) {
-                      if (e.code == 'weak-password') {
-                        await showErrorDialog(
-                          context,
-                          'Weak Password',
-                        );
-                      } else if (e.code == 'email-already-in-use') {
-                        await showErrorDialog(
-                          context,
-                          'Email is already in use',
-                        );
-                      } else if (e.code == 'invalid-email') {
-                        await showErrorDialog(
-                          context,
-                          'Please enter a valid email',
-                        );
-                      } else {
-                        await showErrorDialog(
-                          context,
-                          'Error: ${e.code}',
-                        );
-                      }
-                    } catch (e) {
+                      await AuthService.firebase().createUser(
+                        email: email,
+                        password: password,
+                      );
+                      await AuthService.firebase().signIn(
+                        email: email,
+                        password: password,
+                      );
+                      await AuthService.firebase().sendEmailVerification();
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil(loginView, (route) => false);
+                    } on WeakPasswordAuthException {
                       await showErrorDialog(
                         context,
-                        e.toString(),
+                        'Weak Password',
+                      );
+                    } on EmailAlreadyInUseAuthException {
+                      await showErrorDialog(
+                        context,
+                        'Email is already in use',
+                      );
+                    } on InvalidEmailAuthException {
+                      await showErrorDialog(
+                        context,
+                        'Please enter a valid email',
+                      );
+                    } on NetworkRequestFailedAuthException {
+                      await showErrorDialog(
+                        context,
+                        'No internet connection',
+                      );
+                    } on GenericAuthException {
+                      await showErrorDialog(
+                        context,
+                        'Authentication Error',
                       );
                     }
                   },

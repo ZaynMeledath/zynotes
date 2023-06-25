@@ -1,7 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:zynotes/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
-import 'package:zynotes/main.dart';
+import 'package:zynotes/enums/menu_action.dart';
 
 class GuestHome extends StatefulWidget {
   const GuestHome({super.key});
@@ -49,7 +49,7 @@ class UserHome extends StatefulWidget {
 class _UserHomeState extends State<UserHome> {
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = AuthService.firebase().currentUser;
     return Scaffold(
         appBar: AppBar(
             backgroundColor: const Color.fromARGB(255, 14, 166, 241),
@@ -66,7 +66,12 @@ class _UserHomeState extends State<UserHome> {
                   case MenuAction.logout:
                     final shouldLogout = await showLogoutDialog(context);
                     if (shouldLogout) {
-                      FirebaseAuth.instance.signOut();
+                      showDialog(
+                        context: context,
+                        builder: (context) => const CircularProgressIndicator(),
+                      );
+                      await AuthService.firebase().signOut();
+                      Navigator.of(context).pop();
                       Navigator.of(context)
                           .pushNamedAndRemoveUntil(loginView, (route) => false);
                     }
@@ -90,4 +95,28 @@ class _UserHomeState extends State<UserHome> {
           ),
         ));
   }
+}
+
+Future<bool> showLogoutDialog(BuildContext context) {
+  return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Log Out'),
+          content: const Text('Are you sure you want to log out?'),
+          actions: [
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: const Text('Cancel')),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: const Text('Log Out'),
+            ),
+          ],
+        );
+      }).then((value) => value ?? false);
 }

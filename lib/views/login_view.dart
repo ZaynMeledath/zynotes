@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
 import 'package:zynotes/utilities/show_error_dialog.dart';
-import 'package:zynotes/views/verify_email_view.dart';
+import 'package:zynotes/services/auth/auth_service.dart';
+import 'package:zynotes/services/auth/auth_exceptions.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -64,43 +64,46 @@ class _LoginViewState extends State<LoginView> {
                               child: CircularProgressIndicator(),
                             ));
                     try {
-                      await FirebaseAuth.instance.signInWithEmailAndPassword(
+                      await AuthService.firebase().signIn(
                         email: email,
                         password: password,
                       );
-                      final user = FirebaseAuth.instance.currentUser;
-                      if (user?.emailVerified ?? false) {
+                      final user = AuthService.firebase().currentUser;
+                      if (user?.isEmailVerified ?? false) {
                         Navigator.of(context).pushNamedAndRemoveUntil(
                           homePage,
                           (route) => false,
                         );
                       } else {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => const VerifyEmail()),
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          verifyEmail,
+                          (route) => false,
                         );
                       }
-                    } on FirebaseAuthException catch (e) {
-                      if (e.code == 'user-not-found') {
-                        await showErrorDialog(
-                          context,
-                          'Not a Registered User',
-                        );
-                      } else if (e.code == 'wrong-password') {
-                        await showErrorDialog(
-                          context,
-                          'Incorrect Password',
-                        );
-                      } else {
-                        await showErrorDialog(
-                          context,
-                          'Error: ${e.code}',
-                        );
-                      }
-                    } catch (e) {
+                    } on UserNotFoundAuthException {
                       await showErrorDialog(
                         context,
-                        e.toString(),
+                        'Not a Registered User',
+                      );
+                    } on WrongPasswordAuthException {
+                      await showErrorDialog(
+                        context,
+                        'Incorrect Password',
+                      );
+                    } on NetworkRequestFailedAuthException {
+                      await showErrorDialog(
+                        context,
+                        'No internet connection',
+                      );
+                    } on InvalidEmailAuthException {
+                      await showErrorDialog(
+                        context,
+                        'Please enter a valid email',
+                      );
+                    } on GenericAuthException {
+                      await showErrorDialog(
+                        context,
+                        'Authentication Error',
                       );
                     }
                   },
