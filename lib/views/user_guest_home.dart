@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
 import 'package:zynotes/enums/menu_action.dart';
 
+//GUESTHOME VIEW
+
 class GuestHome extends StatefulWidget {
   const GuestHome({super.key});
 
@@ -38,6 +40,8 @@ class _GuestHomeState extends State<GuestHome> {
         ));
   }
 }
+
+//USERHOME VIEW
 
 class UserHome extends StatefulWidget {
   const UserHome({super.key});
