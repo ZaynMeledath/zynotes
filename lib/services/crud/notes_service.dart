@@ -2,18 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' show join;
-
-class DatabaseAlreadyOpenException implements Exception {}
-
-class UnableToGetDocumentsDirectoryException implements Exception {}
-
-class DatabaseNotOpenException implements Exception {}
-
-class CouldNotDeleteUserException implements Exception {}
-
-class UserAlreadyExistsException implements Exception {}
-
-class CouldNotFindUserException implements Exception {}
+import 'package:zynotes/services/crud/crud_exceptions.dart';
 
 class NotesService {
   Database? _db;
@@ -74,8 +63,11 @@ class NotesService {
       where: 'email = ?',
       whereArgs: [email.toLowerCase()],
     );
-    if (queryResult.isEmpty) throw CouldNotFindUserException();
-    return DatabaseUsers.fromRow(queryResult.first);
+    if (queryResult.isEmpty) {
+      throw CouldNotFindUserException();
+    } else {
+      return DatabaseUsers.fromRow(queryResult.first);
+    }
   }
 
   Future<void> deleteUser({required String email}) async {
@@ -83,6 +75,89 @@ class NotesService {
     final deletedCount = await db.delete(usersTable,
         where: 'email = ?', whereArgs: [email.toLowerCase()]);
     if (deletedCount != 1) throw CouldNotDeleteUserException();
+  }
+
+  Future<DatabaseNotes> createNote({required DatabaseUsers owner}) async {
+    final db = _getDatabaseOrThrow();
+
+    //Making sure owner exists in the database with the correct ID
+    final dbUser = await getUser(email: owner.email);
+    if (dbUser != owner) throw CouldNotFindUserException();
+
+    const content = '';
+
+    //Create the note
+    final noteId = await db.insert(notesTable, {
+      userIdColumn: owner.id,
+      contentColumn: content,
+      isSyncedWithCloudColumn: 1,
+    });
+
+    return DatabaseNotes(
+      id: noteId,
+      userId: owner.id,
+      content: content,
+      isSyncedWithCloud: true,
+    );
+  }
+
+  Future<void> deleteNote({required int id}) async {
+    final db = _getDatabaseOrThrow();
+    final deletedCount = await db.delete(
+      notesTable,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    if (deletedCount == 0) throw CouldNotDeleteNoteException();
+  }
+
+  Future<int> deleteAllNotes() async {
+    final db = _getDatabaseOrThrow();
+    return await db.delete(notesTable);
+  }
+
+  Future<DatabaseNotes> getNote({required int id}) async {
+    final db = _getDatabaseOrThrow();
+    final note = await db.query(
+      notesTable,
+      limit: 1,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    if (note.isEmpty) {
+      throw CouldNotFindNoteException();
+    } else {
+      return DatabaseNotes.fromRow(note.first);
+    }
+  }
+
+  Future<Iterable<DatabaseNotes>> getAllNotes() async {
+    final db = _getDatabaseOrThrow();
+    final notes = await db.query(notesTable);
+
+    if (notes.isEmpty) {
+      throw CouldNotFindNoteException();
+    } else {
+      return notes.map((notesRow) => DatabaseNotes.fromRow(notesRow));
+    }
+  }
+
+  Future<DatabaseNotes> updateNote({
+    required DatabaseNotes note,
+    required String content,
+  }) async {
+    final db = _getDatabaseOrThrow();
+    await getNote(id: note.id);
+    final updateCount = await db.update(notesTable, {
+      contentColumn: content,
+      isSyncedWithCloudColumn: 0,
+    });
+    if (updateCount == 0) {
+      throw CouldNotUpdateNoteException();
+    } else {
+      return await getNote(id: note.id);
+    }
   }
 }
 
