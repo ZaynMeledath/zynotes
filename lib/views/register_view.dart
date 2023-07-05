@@ -14,7 +14,7 @@ class RegisterView extends StatefulWidget {
 class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
-  bool _passwordVisible = false;
+  bool _passwordVisible = true;
 
   @override
   void initState() {
@@ -39,7 +39,7 @@ class _RegisterViewState extends State<RegisterView> {
           title: const Text('Register'),
         ),
         body: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
             child: Column(
               children: [
                 TextField(
@@ -51,25 +51,28 @@ class _RegisterViewState extends State<RegisterView> {
                   autocorrect: false,
                   keyboardType: TextInputType.emailAddress,
                 ),
-                TextField(
-                  controller: _password,
-                  autocorrect: false,
-                  obscureText: _passwordVisible,
-                  enableSuggestions: false,
-                  decoration: InputDecoration(
-                      hintText: 'Enter Password',
-                      border: const OutlineInputBorder(),
-                      prefixIcon: const Icon(Icons.password),
-                      suffixIcon: IconButton(
-                        icon: Icon(_passwordVisible
-                            ? Icons.visibility
-                            : Icons.visibility_off),
-                        onPressed: () {
-                          setState(() {
-                            _passwordVisible = !_passwordVisible;
-                          });
-                        },
-                      )),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: TextField(
+                    controller: _password,
+                    autocorrect: false,
+                    obscureText: _passwordVisible,
+                    enableSuggestions: false,
+                    decoration: InputDecoration(
+                        hintText: 'Enter Password',
+                        border: const OutlineInputBorder(),
+                        prefixIcon: const Icon(Icons.password),
+                        suffixIcon: IconButton(
+                          icon: Icon(_passwordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off),
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible = !_passwordVisible;
+                            });
+                          },
+                        )),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -122,8 +125,8 @@ class _RegisterViewState extends State<RegisterView> {
                 ),
                 TextButton(
                     onPressed: () {
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil(loginView, (route) => false);
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          loginView, (route) => route.isFirst);
                     },
                     child: const Text('Already have an account? Sign in'))
               ],

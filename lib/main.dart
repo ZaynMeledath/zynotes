@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       routes: {
         homePage: (context) => const HomePage(),
         loginView: (context) => const LoginView(),
@@ -26,10 +27,10 @@ class MyApp extends StatelessWidget {
       },
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 5, 140, 207)),
-        useMaterial3: true,
-      ),
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color.fromARGB(255, 5, 177, 207)),
+          useMaterial3: true,
+          appBarTheme: const AppBarTheme(foregroundColor: Colors.white)),
       home: const HomePage(),
     );
   }
