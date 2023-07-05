@@ -3,57 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
 import 'package:zynotes/enums/menu_action.dart';
 
-//GUESTHOME VIEW
+//USER HOME VIEW
 
-class GuestHome extends StatefulWidget {
-  const GuestHome({super.key});
+class NotesView extends StatefulWidget {
+  const NotesView({super.key});
 
   @override
-  State<GuestHome> createState() => _GuestHomeState();
+  State<NotesView> createState() => _NotesViewState();
 }
 
-class _GuestHomeState extends State<GuestHome> {
+class _NotesViewState extends State<NotesView> {
+  String get userEmail => AuthService.firebase().currentUser!.email!;
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 14, 166, 241),
-          title: const Text('Home Page'),
-          centerTitle: true,
-        ),
-        body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
-          child: Center(
-            child: Column(
-              children: [
-                const Text('Hi Guest'),
-                const Text('WELCOME TO ZYNOTES'),
-                ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil(loginView, (route) => false);
-                    },
-                    child: const Text('Login or Register'))
-              ],
-            ),
-          ),
-        ));
-  }
-}
-
-//USERHOME VIEW
-
-class UserHome extends StatefulWidget {
-  const UserHome({super.key});
-
-  @override
-  State<UserHome> createState() => _UserHomeState();
-}
-
-class _UserHomeState extends State<UserHome> {
-  @override
-  Widget build(BuildContext context) {
-    final user = AuthService.firebase().currentUser;
     return Scaffold(
         appBar: AppBar(
             backgroundColor: const Color.fromARGB(255, 14, 166, 241),
@@ -87,7 +50,7 @@ class _UserHomeState extends State<UserHome> {
           child: Center(
             child: Column(
               children: [
-                Text('Hi ${user?.email}'),
+                Text('Hi $userEmail'),
                 const Text('WELCOME TO ZYNOTES'),
                 ElevatedButton(
                     onPressed: () {

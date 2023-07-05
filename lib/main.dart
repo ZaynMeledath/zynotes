@@ -3,7 +3,8 @@ import 'package:zynotes/constants/routes.dart';
 import 'package:zynotes/views/login_view.dart';
 import 'package:zynotes/views/register_view.dart';
 import 'package:zynotes/views/verify_email_view.dart';
-import 'package:zynotes/views/user_guest_home.dart';
+import 'package:zynotes/views/notes_view.dart';
+import 'package:zynotes/views/guest_view.dart';
 import 'package:zynotes/services/auth/auth_service.dart';
 
 void main() async {
@@ -44,12 +45,12 @@ class HomePage extends StatelessWidget {
     final user = AuthService.firebase().currentUser;
     if (user != null) {
       if (user.isEmailVerified) {
-        return const UserHome();
+        return const NotesView();
       } else {
         return const VerifyEmail();
       }
     } else {
-      return const GuestHome();
+      return const GuestView();
     }
   }
 }
