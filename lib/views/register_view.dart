@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
 import 'package:zynotes/services/auth/auth_exceptions.dart';
 import 'package:zynotes/services/auth/auth_service.dart';
+import 'package:zynotes/utilities/progress_indicator.dart';
 import 'package:zynotes/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
@@ -81,7 +82,7 @@ class _RegisterViewState extends State<RegisterView> {
                     showDialog(
                         context: context,
                         builder: (context) =>
-                            const Center(child: CircularProgressIndicator()));
+                            Center(child: Progress.indicator));
                     try {
                       await AuthService.firebase().createUser(
                         email: email,

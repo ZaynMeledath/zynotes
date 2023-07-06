@@ -1,5 +1,8 @@
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
+import 'package:zynotes/utilities/progress_indicator.dart';
 import 'package:zynotes/views/login_view.dart';
 import 'package:zynotes/views/register_view.dart';
 import 'package:zynotes/views/verify_email_view.dart';
@@ -42,6 +45,11 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (Platform.isIOS) {
+      Progress.indicator = const CupertinoActivityIndicator();
+    } else {
+      Progress.indicator = const CircularProgressIndicator();
+    }
     final user = AuthService.firebase().currentUser;
     if (user != null) {
       if (user.isEmailVerified) {

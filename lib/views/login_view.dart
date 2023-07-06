@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
+import 'package:zynotes/utilities/progress_indicator.dart';
 import 'package:zynotes/utilities/show_error_dialog.dart';
 import 'package:zynotes/services/auth/auth_service.dart';
 import 'package:zynotes/services/auth/auth_exceptions.dart';
@@ -80,8 +81,8 @@ class _LoginViewState extends State<LoginView> {
                     final password = _password.text;
                     showDialog(
                         context: context,
-                        builder: (context) => const Center(
-                              child: CircularProgressIndicator(),
+                        builder: (context) => Center(
+                              child: Progress.indicator,
                             ));
                     try {
                       await AuthService.firebase().signIn(

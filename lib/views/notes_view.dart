@@ -2,6 +2,8 @@ import 'package:zynotes/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
 import 'package:zynotes/enums/menu_action.dart';
+import 'package:zynotes/services/crud/notes_service.dart';
+import 'package:zynotes/utilities/progress_indicator.dart';
 
 //USER HOME VIEW
 
@@ -13,7 +15,20 @@ class NotesView extends StatefulWidget {
 }
 
 class _NotesViewState extends State<NotesView> {
+  late final NotesService _notesService;
   String get userEmail => AuthService.firebase().currentUser!.email!;
+
+  @override
+  void initState() {
+    _notesService = NotesService();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _notesService.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +50,7 @@ class _NotesViewState extends State<NotesView> {
                     if (shouldLogout) {
                       showDialog(
                         context: context,
-                        builder: (context) => const CircularProgressIndicator(),
+                        builder: (context) => Progress.indicator,
                       );
                       await AuthService.firebase().signOut();
                       Navigator.of(context).pop();
@@ -45,21 +60,25 @@ class _NotesViewState extends State<NotesView> {
                 }
               })
             ]),
-        body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
-          child: Center(
-            child: Column(
-              children: [
-                Text('Hi $userEmail'),
-                const Text('WELCOME TO ZYNOTES'),
-                ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(loginView);
-                    },
-                    child: const Text('Login to another account'))
-              ],
-            ),
-          ),
+        body: FutureBuilder(
+          future: _notesService.getOrCreateUser(email: userEmail),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.done:
+                return StreamBuilder(
+                    stream: _notesService.allNotes,
+                    builder: (context, snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return const Text('Waiting for all notes...');
+                        default:
+                          return Progress.indicator;
+                      }
+                    });
+              default:
+                return Progress.indicator;
+            }
+          },
         ));
   }
 }
