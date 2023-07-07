@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:zynotes/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
@@ -33,33 +35,35 @@ class _NotesViewState extends State<NotesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            backgroundColor: const Color.fromARGB(255, 14, 166, 241),
-            title: const Text('Home Page'),
-            centerTitle: true,
-            actions: [
-              PopupMenuButton<MenuAction>(itemBuilder: (context) {
-                return const [
-                  PopupMenuItem<MenuAction>(
-                      value: MenuAction.logout, child: Text('Log Out'))
-                ];
-              }, onSelected: (value) async {
-                switch (value) {
-                  case MenuAction.logout:
-                    final shouldLogout = await showLogoutDialog(context);
-                    if (shouldLogout) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => Progress.indicator,
-                      );
-                      await AuthService.firebase().signOut();
-                      Navigator.of(context).pop();
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil(loginView, (route) => false);
-                    }
+        appBar:
+            AppBar(title: const Text('Home Page'), centerTitle: true, actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(newNoteView);
+              },
+              icon: const Icon(Icons.add)),
+          PopupMenuButton<MenuAction>(itemBuilder: (context) {
+            return const [
+              PopupMenuItem<MenuAction>(
+                  value: MenuAction.logout, child: Text('Log Out'))
+            ];
+          }, onSelected: (value) async {
+            switch (value) {
+              case MenuAction.logout:
+                final shouldLogout = await showLogoutDialog(context);
+                if (shouldLogout) {
+                  showDialog(
+                    context: context,
+                    builder: (context) => ActivityIndicator.indicator,
+                  );
+                  await AuthService.firebase().signOut();
+                  Navigator.of(context).pop();
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(loginView, (route) => false);
                 }
-              })
-            ]),
+            }
+          })
+        ]),
         body: FutureBuilder(
           future: _notesService.getOrCreateUser(email: userEmail),
           builder: (context, snapshot) {
@@ -70,13 +74,14 @@ class _NotesViewState extends State<NotesView> {
                     builder: (context, snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
+                        case ConnectionState.active:
                           return const Text('Waiting for all notes...');
                         default:
-                          return Progress.indicator;
+                          return ActivityIndicator.indicator;
                       }
                     });
               default:
-                return Progress.indicator;
+                return ActivityIndicator.indicator;
             }
           },
         ));

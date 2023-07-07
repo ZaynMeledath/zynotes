@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
 import 'package:zynotes/utilities/progress_indicator.dart';
 import 'package:zynotes/views/login_view.dart';
+import 'package:zynotes/views/notes/new_note_view.dart';
 import 'package:zynotes/views/register_view.dart';
 import 'package:zynotes/views/verify_email_view.dart';
-import 'package:zynotes/views/notes_view.dart';
+import 'package:zynotes/views/notes/notes_view.dart';
 import 'package:zynotes/views/guest_view.dart';
 import 'package:zynotes/services/auth/auth_service.dart';
 
@@ -28,13 +29,17 @@ class MyApp extends StatelessWidget {
         loginView: (context) => const LoginView(),
         registerView: (context) => const RegisterView(),
         verifyEmail: (context) => const VerifyEmail(),
+        newNoteView: (context) => const NewNoteView(),
       },
-      title: 'Flutter Demo',
+      title: 'ZyNotes',
       theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-              seedColor: const Color.fromARGB(255, 5, 177, 207)),
-          useMaterial3: true,
-          appBarTheme: const AppBarTheme(foregroundColor: Colors.white)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 5, 177, 207)),
+        useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+            foregroundColor: Colors.white,
+            backgroundColor: Color.fromARGB(255, 14, 166, 241)),
+      ),
       home: const HomePage(),
     );
   }
@@ -46,9 +51,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (Platform.isIOS) {
-      Progress.indicator = const CupertinoActivityIndicator();
+      ActivityIndicator.indicator = const CupertinoActivityIndicator();
     } else {
-      Progress.indicator = const CircularProgressIndicator();
+      ActivityIndicator.indicator = const CircularProgressIndicator();
     }
     final user = AuthService.firebase().currentUser;
     if (user != null) {

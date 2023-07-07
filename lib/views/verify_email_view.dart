@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:zynotes/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
@@ -19,7 +21,6 @@ class _VerifyEmailState extends State<VerifyEmail> {
         appBar: AppBar(
           title: const Text('Verify Email'),
           centerTitle: true,
-          backgroundColor: const Color.fromARGB(255, 14, 166, 241),
         ),
         body: Container(
           padding: const EdgeInsets.symmetric(

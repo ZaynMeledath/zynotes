@@ -21,10 +21,6 @@ class NotesService {
 
   Stream<List<DatabaseNotes>> get allNotes => _notesStreamController.stream;
 
-  void demo() {
-    print(number);
-  }
-
   Future<void> _cachedNotes() async {
     final allNotes = await getAllNotes();
     _notes = allNotes.toList();
@@ -216,11 +212,20 @@ class NotesService {
   }) async {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
+
+    //Make sure note exists
     await getNote(id: note.id);
-    final updateCount = await db.update(notesTable, {
-      contentColumn: content,
-      isSyncedWithCloudColumn: 0,
-    });
+
+    //Update DB
+    final updateCount = await db.update(
+      notesTable,
+      {
+        contentColumn: content,
+        isSyncedWithCloudColumn: 0,
+      },
+      where: 'id = ?',
+      whereArgs: [note.id],
+    );
     if (updateCount == 0) {
       throw CouldNotUpdateNoteException();
     } else {

@@ -15,7 +15,6 @@ class _GuestViewState extends State<GuestView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 14, 166, 241),
           title: const Text('Home Page'),
           centerTitle: true,
         ),

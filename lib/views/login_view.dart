@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
 import 'package:zynotes/utilities/progress_indicator.dart';
@@ -35,7 +37,6 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 14, 166, 241),
           centerTitle: true,
           title: const Text('Login'),
         ),
@@ -82,7 +83,7 @@ class _LoginViewState extends State<LoginView> {
                     showDialog(
                         context: context,
                         builder: (context) => Center(
-                              child: Progress.indicator,
+                              child: ActivityIndicator.indicator,
                             ));
                     try {
                       await AuthService.firebase().signIn(
