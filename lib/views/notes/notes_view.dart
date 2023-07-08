@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
 import 'package:zynotes/enums/menu_action.dart';
 import 'package:zynotes/services/crud/notes_service.dart';
+import 'package:zynotes/utilities/dialogs/logout_dialog.dart';
 import 'package:zynotes/utilities/progress_indicator.dart';
+import 'package:zynotes/views/notes/notes_list_view.dart';
 
 //USER HOME VIEW
 
@@ -24,12 +26,6 @@ class _NotesViewState extends State<NotesView> {
   void initState() {
     _notesService = NotesService();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _notesService.close();
-    super.dispose();
   }
 
   @override
@@ -75,7 +71,18 @@ class _NotesViewState extends State<NotesView> {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
                         case ConnectionState.active:
-                          return const Text('Waiting for all notes...');
+                          if (snapshot.hasData) {
+                            final allNotes =
+                                snapshot.data as List<DatabaseNotes>;
+                            return NotesListView(
+                              allNotes: allNotes,
+                              onDeleteNote: (note) async {
+                                await _notesService.deleteNote(id: note.id);
+                              },
+                            );
+                          } else {
+                            return ActivityIndicator.indicator;
+                          }
                         default:
                           return ActivityIndicator.indicator;
                       }
@@ -86,28 +93,4 @@ class _NotesViewState extends State<NotesView> {
           },
         ));
   }
-}
-
-Future<bool> showLogoutDialog(BuildContext context) {
-  return showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Log Out'),
-          content: const Text('Are you sure you want to log out?'),
-          actions: [
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: const Text('Cancel')),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop(true);
-              },
-              child: const Text('Log Out'),
-            ),
-          ],
-        );
-      }).then((value) => value ?? false);
 }
