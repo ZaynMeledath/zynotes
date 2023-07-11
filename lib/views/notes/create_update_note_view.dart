@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:zynotes/services/auth/auth_service.dart';
 import 'package:zynotes/services/crud/notes_service.dart';
+import 'package:zynotes/utilities/generics/get_arguments.dart';
 import 'package:zynotes/utilities/progress_indicator.dart';
 
-class NewNoteView extends StatefulWidget {
-  const NewNoteView({super.key});
+class CreateUpdateNoteView extends StatefulWidget {
+  const CreateUpdateNoteView({super.key});
 
   @override
-  State<NewNoteView> createState() => _NewNoteViewState();
+  State<CreateUpdateNoteView> createState() => _CreateUpdateNoteViewState();
 }
 
-class _NewNoteViewState extends State<NewNoteView> {
+class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   DatabaseNotes? _note;
   late final NotesService _notesService;
   late final TextEditingController _textController;
@@ -22,15 +23,21 @@ class _NewNoteViewState extends State<NewNoteView> {
     super.initState();
   }
 
-  Future<DatabaseNotes> createNewNote() async {
-    final existingNote = _note;
+  Future<DatabaseNotes> createOrGetNote(BuildContext context) async {
+    final existingNote = context.getArgument<DatabaseNotes>();
+
     if (existingNote != null) {
+      _note = existingNote;
+      _textController.text = existingNote.content;
       return existingNote;
     }
+
     final currentUser = AuthService.firebase().currentUser!;
     final email = currentUser.email!;
     final owner = await _notesService.getUser(email: email);
-    return await _notesService.createNote(owner: owner);
+    final newNote = await _notesService.createNote(owner: owner);
+    _note = newNote;
+    return newNote;
   }
 
   void _textControllerListener() async {
@@ -53,7 +60,7 @@ class _NewNoteViewState extends State<NewNoteView> {
   void _saveOrDeleteOnDispose() async {
     final note = _note;
     final content = _textController.text;
-    if (content.isEmpty && note != null) {
+    if (note != null && content.isEmpty) {
       _notesService.deleteNote(id: note.id);
     } else if (note != null && content.isNotEmpty) {
       await _notesService.updateNote(note: note, content: content);
@@ -75,11 +82,10 @@ class _NewNoteViewState extends State<NewNoteView> {
         centerTitle: true,
       ),
       body: FutureBuilder(
-        future: createNewNote(),
+        future: createOrGetNote(context),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-              _note = snapshot.data as DatabaseNotes;
               _setupTextControllerListener();
               return TextField(
                 controller: _textController,

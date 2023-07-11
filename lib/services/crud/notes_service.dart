@@ -7,8 +7,8 @@ import 'package:zynotes/services/crud/crud_exceptions.dart';
 
 class NotesService {
   Database? _db;
-
   int number = 0;
+  List<DatabaseNotes> _notes = [];
 
   late final StreamController<List<DatabaseNotes>> _notesStreamController;
 
@@ -21,8 +21,6 @@ class NotesService {
   }
   static final NotesService _shared = NotesService._sharedInstance();
   factory NotesService() => _shared;
-
-  List<DatabaseNotes> _notes = [];
 
   Stream<List<DatabaseNotes>> get allNotes => _notesStreamController.stream;
 

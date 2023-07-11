@@ -1,10 +1,10 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart' show CupertinoActivityIndicator;
 import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
 import 'package:zynotes/utilities/progress_indicator.dart';
 import 'package:zynotes/views/login_view.dart';
-import 'package:zynotes/views/notes/new_note_view.dart';
+import 'package:zynotes/views/notes/create_update_note_view.dart';
 import 'package:zynotes/views/register_view.dart';
 import 'package:zynotes/views/verify_email_view.dart';
 import 'package:zynotes/views/notes/notes_view.dart';
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         loginView: (context) => const LoginView(),
         registerView: (context) => const RegisterView(),
         verifyEmail: (context) => const VerifyEmail(),
-        newNoteView: (context) => const NewNoteView(),
+        createUpdateNoteView: (context) => const CreateUpdateNoteView(),
       },
       title: 'ZyNotes',
       theme: ThemeData(

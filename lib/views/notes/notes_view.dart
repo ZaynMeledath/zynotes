@@ -35,7 +35,7 @@ class _NotesViewState extends State<NotesView> {
             AppBar(title: const Text('Home Page'), centerTitle: true, actions: [
           IconButton(
               onPressed: () {
-                Navigator.of(context).pushNamed(newNoteView);
+                Navigator.of(context).pushNamed(createUpdateNoteView);
               },
               icon: const Icon(Icons.add)),
           PopupMenuButton<MenuAction>(itemBuilder: (context) {
@@ -75,9 +75,15 @@ class _NotesViewState extends State<NotesView> {
                             final allNotes =
                                 snapshot.data as List<DatabaseNotes>;
                             return NotesListView(
-                              allNotes: allNotes,
+                              notes: allNotes,
                               onDeleteNote: (note) async {
                                 await _notesService.deleteNote(id: note.id);
+                              },
+                              onTap: (note) async {
+                                Navigator.of(context).pushNamed(
+                                  createUpdateNoteView,
+                                  arguments: note,
+                                );
                               },
                             );
                           } else {
