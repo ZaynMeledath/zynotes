@@ -5,6 +5,7 @@ Future<void> showErrorDialog(
   BuildContext context,
   String content,
 ) {
+  Navigator.of(context).pop();
   return showGenericDialog(
     context: context,
     title: 'An Error Occured',

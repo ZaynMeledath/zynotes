@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zynotes/services/auth/auth_service.dart';
 import 'package:zynotes/services/crud/notes_service.dart';
-import 'package:zynotes/utilities/generics/get_arguments.dart';
+import 'package:zynotes/extensions/get_arguments.dart';
 import 'package:zynotes/utilities/progress_indicator.dart';
 
 class CreateUpdateNoteView extends StatefulWidget {

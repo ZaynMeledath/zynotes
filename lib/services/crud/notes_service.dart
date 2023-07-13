@@ -3,12 +3,15 @@ import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' show join;
+import 'package:zynotes/extensions/filter.dart';
 import 'package:zynotes/services/crud/crud_exceptions.dart';
 
 class NotesService {
   Database? _db;
   int number = 0;
   List<DatabaseNotes> _notes = [];
+
+  DatabaseUsers? _user;
 
   late final StreamController<List<DatabaseNotes>> _notesStreamController;
 
@@ -22,7 +25,15 @@ class NotesService {
   static final NotesService _shared = NotesService._sharedInstance();
   factory NotesService() => _shared;
 
-  Stream<List<DatabaseNotes>> get allNotes => _notesStreamController.stream;
+  Stream<List<DatabaseNotes>> get allNotes =>
+      _notesStreamController.stream.filter((note) {
+        final currentUser = _user;
+        if (currentUser != null) {
+          return note.userId == currentUser.id;
+        } else {
+          throw UserShouldBeSetBeforeReadingAllNotesException();
+        }
+      });
 
   Future<void> _cachedNotes() async {
     final allNotes = await getAllNotes();
@@ -44,12 +55,17 @@ class NotesService {
     }
   }
 
-  Future<DatabaseUsers> getOrCreateUser({required String email}) async {
+  Future<DatabaseUsers> getOrCreateUser({
+    required String email,
+    bool setAsCurrentUser = true,
+  }) async {
     try {
       final user = await getUser(email: email);
+      if (setAsCurrentUser) _user = user;
       return user;
     } on CouldNotFindUserException {
       final createdUser = await createUser(email: email);
+      if (setAsCurrentUser) _user = createdUser;
       return createdUser;
     } catch (e) {
       rethrow;
