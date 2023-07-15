@@ -59,7 +59,11 @@ class _RegisterViewState extends State<RegisterView> {
                   )),
             )),
         Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            padding: const EdgeInsets.only(
+              left: 20,
+              right: 20,
+              top: 40,
+            ),
             child: Column(
               children: [
                 TextField(
@@ -166,7 +170,7 @@ class _RegisterViewState extends State<RegisterView> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 18),
                 TextButton(
                     onPressed: () {
                       Navigator.of(context).pushNamedAndRemoveUntil(

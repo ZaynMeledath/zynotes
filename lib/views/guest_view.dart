@@ -13,41 +13,89 @@ class GuestView extends StatefulWidget {
 class _GuestViewState extends State<GuestView> {
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Home Page'),
-          centerTitle: true,
-        ),
-        body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 15),
-          child: Center(
-            child: Column(
-              children: [
-                const Padding(
-                    padding: EdgeInsets.only(bottom: 8, top: 3),
-                    child: Text(
-                      'Hi Guest',
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    )),
-                const Text(
-                  'WELCOME TO ZYNOTES',
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+        body: SafeArea(
+      child: Center(
+        child: Column(
+          children: [
+            Stack(children: [
+              Container(
+                width: screenWidth,
+                height: screenHeight * .25,
+                decoration: const BoxDecoration(
+                    color: Color.fromARGB(255, 233, 232, 232),
+                    borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(120),
+                        bottomRight: Radius.circular(120))),
+                child: Image.asset(
+                  'assets/images/ColorfulNote.png',
+                  width: 250,
+                  height: 250,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            loginView, (route) => false);
-                      },
-                      child: const Text('Login or Register')),
-                )
-              ],
+              ),
+              const Positioned(
+                left: 145,
+                top: 55,
+                child: Text(
+                  'Hi',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 30,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+              const Positioned(
+                left: 210,
+                top: 55,
+                child: Text(
+                  'Guest',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 30,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ),
+            ]),
+            const SizedBox(height: 50),
+            const Text(
+              'WELCOME TO ZYNOTES',
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
             ),
-          ),
-        ));
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil(loginView, (route) => false);
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 60,
+                  vertical: 40,
+                ),
+                child: Container(
+                  width: double.infinity,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 221, 220, 220),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: const Center(
+                    child: Text('Login or Register',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        )),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ));
   }
 }
