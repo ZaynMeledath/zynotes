@@ -33,13 +33,20 @@ class MyApp extends StatelessWidget {
       },
       title: 'ZyNotes',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 5, 177, 207)),
-        useMaterial3: true,
-        appBarTheme: const AppBarTheme(
-            foregroundColor: Colors.white,
-            backgroundColor: Color.fromARGB(255, 14, 166, 241)),
-      ),
+          scaffoldBackgroundColor: Colors.black,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color.fromARGB(255, 11, 11, 11),
+            titleTextStyle: TextStyle(
+              color: Color.fromARGB(255, 167, 166, 166),
+              fontSize: 23,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.white,
+            brightness: Brightness.dark,
+            primary: const Color.fromARGB(255, 221, 220, 220),
+          )),
       home: const HomePage(),
     );
   }

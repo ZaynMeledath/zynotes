@@ -35,21 +35,40 @@ class _RegisterViewState extends State<RegisterView> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isKeyboard = MediaQuery.of(context).viewInsets.bottom != 0;
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: const Text('Register'),
-        ),
-        body: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+        body: SafeArea(
+      child: Column(children: [
+        Container(
+            width: screenWidth,
+            height: isKeyboard ? screenHeight * .10 : screenHeight * .25,
+            decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 233, 232, 232),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(120),
+                  bottomRight: Radius.circular(120),
+                )),
+            child: const Center(
+              child: Text('Register',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold,
+                  )),
+            )),
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
             child: Column(
               children: [
                 TextField(
                   controller: _email,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                       hintText: 'Enter Email',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email)),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(18)),
+                      prefixIcon: const Icon(Icons.email)),
                   autocorrect: false,
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -62,7 +81,8 @@ class _RegisterViewState extends State<RegisterView> {
                     enableSuggestions: false,
                     decoration: InputDecoration(
                         hintText: 'Enter Password',
-                        border: const OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(18)),
                         prefixIcon: const Icon(Icons.password),
                         suffixIcon: IconButton(
                           icon: Icon(_passwordVisible
@@ -76,8 +96,8 @@ class _RegisterViewState extends State<RegisterView> {
                         )),
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () async {
+                GestureDetector(
+                  onTap: () async {
                     final email = _email.text;
                     final password = _password.text;
                     showDialog(
@@ -123,15 +143,43 @@ class _RegisterViewState extends State<RegisterView> {
                       );
                     }
                   },
-                  child: const Text('Register'),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                      top: 25,
+                    ),
+                    child: Container(
+                      width: double.infinity,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 221, 220, 220),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: const Center(
+                        child: Text('Register',
+                            style: TextStyle(
+                              fontSize: 17,
+                              color: Colors.black,
+                            )),
+                      ),
+                    ),
+                  ),
                 ),
+                const SizedBox(height: 20),
                 TextButton(
                     onPressed: () {
                       Navigator.of(context).pushNamedAndRemoveUntil(
                           loginView, (route) => route.isFirst);
                     },
-                    child: const Text('Already have an account? Sign in'))
+                    child: const Text('Already have an account? Sign in',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w300,
+                        )))
               ],
-            )));
+            )),
+      ]),
+    ));
   }
 }

@@ -12,11 +12,13 @@ Future<T?> showGenericDialog<T>({
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: const Color.fromARGB(255, 29, 29, 29),
+          elevation: 80,
           title: Text(title),
           content: Text(content),
           actions: options.keys.map((optionTitle) {
             final T? value = options[optionTitle];
-            return ElevatedButton(
+            return TextButton(
                 onPressed: () {
                   if (value != null) {
                     Navigator.of(context).pop(value);

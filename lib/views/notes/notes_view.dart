@@ -31,72 +31,78 @@ class _NotesViewState extends State<NotesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar:
-            AppBar(title: const Text('Home Page'), centerTitle: true, actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(createUpdateNoteView);
-              },
-              icon: const Icon(Icons.add)),
-          PopupMenuButton<MenuAction>(itemBuilder: (context) {
-            return const [
-              PopupMenuItem<MenuAction>(
-                  value: MenuAction.logout, child: Text('Log Out'))
-            ];
-          }, onSelected: (value) async {
-            switch (value) {
-              case MenuAction.logout:
-                final shouldLogout = await showLogoutDialog(context);
-                if (shouldLogout) {
-                  showDialog(
-                    context: context,
-                    builder: (context) => ActivityIndicator.indicator,
-                  );
-                  await AuthService.firebase().signOut();
-                  Navigator.of(context).pop();
-                  Navigator.of(context)
-                      .pushNamedAndRemoveUntil(loginView, (route) => false);
-                }
-            }
-          })
-        ]),
-        body: FutureBuilder(
-          future: _notesService.getOrCreateUser(email: userEmail),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.done:
-                return StreamBuilder(
-                    stream: _notesService.allNotes,
-                    builder: (context, snapshot) {
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                        case ConnectionState.active:
-                          if (snapshot.hasData) {
-                            final allNotes =
-                                snapshot.data as List<DatabaseNotes>;
-                            return NotesListView(
-                              notes: allNotes,
-                              onDeleteNote: (note) async {
-                                await _notesService.deleteNote(id: note.id);
-                              },
-                              onTap: (note) async {
-                                Navigator.of(context).pushNamed(
-                                  createUpdateNoteView,
-                                  arguments: note,
-                                );
-                              },
-                            );
-                          } else {
+        appBar: AppBar(
+          title: const Text('Notes'),
+          centerTitle: true,
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(createUpdateNoteView);
+                },
+                icon: const Icon(Icons.add)),
+            PopupMenuButton<MenuAction>(itemBuilder: (context) {
+              return const [
+                PopupMenuItem<MenuAction>(
+                    value: MenuAction.logout, child: Text('Log Out')),
+              ];
+            }, onSelected: (value) async {
+              switch (value) {
+                case MenuAction.logout:
+                  final shouldLogout = await showLogoutDialog(context);
+                  if (shouldLogout) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => ActivityIndicator.indicator,
+                    );
+                    await AuthService.firebase().signOut();
+                    Navigator.of(context).pop();
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil(loginView, (route) => false);
+                  }
+              }
+            })
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: FutureBuilder(
+            future: _notesService.getOrCreateUser(email: userEmail),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.done:
+                  return StreamBuilder(
+                      stream: _notesService.allNotes,
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                          case ConnectionState.active:
+                            if (snapshot.hasData) {
+                              final allNotes =
+                                  snapshot.data as List<DatabaseNotes>;
+                              return NotesListView(
+                                notes: allNotes,
+                                onDeleteNote: (note) async {
+                                  await _notesService.deleteNote(id: note.id);
+                                },
+                                onTap: (note) async {
+                                  Navigator.of(context).pushNamed(
+                                    createUpdateNoteView,
+                                    arguments: note,
+                                  );
+                                },
+                              );
+                            } else {
+                              return ActivityIndicator.indicator;
+                            }
+                          default:
                             return ActivityIndicator.indicator;
-                          }
-                        default:
-                          return ActivityIndicator.indicator;
-                      }
-                    });
-              default:
-                return ActivityIndicator.indicator;
-            }
-          },
+                        }
+                      });
+                default:
+                  return ActivityIndicator.indicator;
+              }
+            },
+          ),
         ));
   }
 }

@@ -23,14 +23,28 @@ class _GuestViewState extends State<GuestView> {
           child: Center(
             child: Column(
               children: [
-                const Text('Hi Guest'),
-                const Text('WELCOME TO ZYNOTES'),
-                ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil(loginView, (route) => false);
-                    },
-                    child: const Text('Login or Register'))
+                const Padding(
+                    padding: EdgeInsets.only(bottom: 8, top: 3),
+                    child: Text(
+                      'Hi Guest',
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )),
+                const Text(
+                  'WELCOME TO ZYNOTES',
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            loginView, (route) => false);
+                      },
+                      child: const Text('Login or Register')),
+                )
               ],
             ),
           ),

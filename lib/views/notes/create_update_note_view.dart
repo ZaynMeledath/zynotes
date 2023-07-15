@@ -94,7 +94,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
                 maxLines: null,
                 decoration: InputDecoration(
                   hintText: 'Start typing your note...',
-                  hintStyle: TextStyle(color: Colors.black.withOpacity(.35)),
+                  hintStyle: TextStyle(color: Colors.white.withOpacity(.35)),
                   border: InputBorder.none,
                 ),
               );
