@@ -33,9 +33,9 @@ class MyApp extends StatelessWidget {
       },
       title: 'ZyNotes',
       theme: ThemeData(
-          scaffoldBackgroundColor: Colors.black,
+          scaffoldBackgroundColor: const Color.fromARGB(255, 11, 11, 11),
           appBarTheme: const AppBarTheme(
-            backgroundColor: Color.fromARGB(255, 11, 11, 11),
+            backgroundColor: Color.fromARGB(255, 15, 15, 15),
             titleTextStyle: TextStyle(
               color: Color.fromARGB(255, 167, 166, 166),
               fontSize: 23,

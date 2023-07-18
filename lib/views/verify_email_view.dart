@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
 import 'package:zynotes/services/auth/auth_exceptions.dart';
 import 'package:zynotes/utilities/dialogs/error_dialog.dart';
+import 'package:zynotes/utilities/progress_indicator.dart';
 
 class VerifyEmail extends StatefulWidget {
   const VerifyEmail({super.key});
@@ -16,49 +17,64 @@ class VerifyEmail extends StatefulWidget {
 class _VerifyEmailState extends State<VerifyEmail> {
   @override
   Widget build(BuildContext context) {
-    final user = AuthService.firebase().currentUser;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final user = AuthService.firebase().currentUser!;
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Verify Email'),
-          centerTitle: true,
-        ),
-        body: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: 10,
-          ),
-          child: Center(
-            child: Column(
-              children: [
-                Text('Click to verify your email ${user?.email}'),
-                ElevatedButton(
-                    onPressed: () async {
-                      if (user == null) {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            loginView, (route) => false);
-                      } else if (!user.isEmailVerified) {
-                        try {
-                          await AuthService.firebase().sendEmailVerification();
-                        } on NetworkRequestFailedAuthException {
-                          await showErrorDialog(
-                            context,
-                            'No internet connection',
-                          );
-                        }
-                      }
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil(loginView, (route) => false);
-                    },
-                    child: const Text('Verify')),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil(loginView, (route) => false);
-                  },
-                  child: const Text('Login to another account'),
-                )
-              ],
+        body: SafeArea(
+      child: Center(
+        child: Column(
+          children: [
+            Container(
+              width: screenWidth,
+              height: screenHeight * .25,
+              decoration: const BoxDecoration(
+                  color: Color.fromARGB(255, 233, 232, 232),
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(120),
+                      bottomRight: Radius.circular(120))),
+              child: const Center(
+                child: Text(
+                  'Verify Email',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ));
+            Text('Click to verify your email ${user.email}'),
+            ElevatedButton(
+                onPressed: () async {
+                  showDialog(
+                      context: context,
+                      builder: (context) =>
+                          Center(child: ActivityIndicator.indicator));
+                  if (!user.isEmailVerified) {
+                    try {
+                      await AuthService.firebase().sendEmailVerification();
+                    } on NetworkRequestFailedAuthException {
+                      await showErrorDialog(
+                        context,
+                        'No internet connection',
+                      );
+                    }
+                  }
+                  Navigator.of(context)
+                      .pushNamedAndRemoveUntil(loginView, (route) => false);
+                },
+                child: const Text('Verify')),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil(loginView, (route) => false);
+              },
+              child: const Text('Login to another account'),
+            )
+          ],
+        ),
+      ),
+    ));
   }
 }

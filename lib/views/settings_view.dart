@@ -12,7 +12,7 @@ class _SettingsViewState extends State<SettingsView> {
   bool darkThemeToggle = false;
   @override
   Widget build(BuildContext context) {
-    final userEmail = AuthService.firebase().currentUser!.email!;
+    final userEmail = AuthService.firebase().currentUser!.email;
     return Scaffold(
         appBar: AppBar(
           title: const Text('Settings'),

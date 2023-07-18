@@ -25,7 +25,11 @@ class _GuestViewState extends State<GuestView> {
                 width: screenWidth,
                 height: screenHeight * .25,
                 decoration: const BoxDecoration(
-                    color: Color.fromARGB(255, 233, 232, 232),
+                    gradient: LinearGradient(colors: [
+                      Colors.lightBlueAccent,
+                      Colors.white,
+                    ]),
+                    // color: Color.fromARGB(141, 73, 73, 73),
                     borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(120),
                         bottomRight: Radius.circular(120))),
@@ -60,10 +64,10 @@ class _GuestViewState extends State<GuestView> {
                 ),
               ),
             ]),
-            const SizedBox(height: 50),
+            const SizedBox(height: 145),
             const Text(
               'WELCOME TO ZYNOTES',
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 29, fontWeight: FontWeight.w500),
             ),
             GestureDetector(
               onTap: () {
@@ -92,6 +96,22 @@ class _GuestViewState extends State<GuestView> {
                   ),
                 ),
               ),
+            ),
+            const Expanded(
+              child: SizedBox(),
+            ),
+            Container(
+              width: screenWidth,
+              height: screenHeight * .11,
+              decoration: const BoxDecoration(
+                  gradient: LinearGradient(colors: [
+                    Colors.lightBlueAccent,
+                    Colors.white,
+                  ]),
+                  // color: Color.fromARGB(141, 73, 73, 73),
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(200),
+                      topRight: Radius.circular(200))),
             ),
           ],
         ),
