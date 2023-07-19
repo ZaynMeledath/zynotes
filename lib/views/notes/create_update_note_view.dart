@@ -96,7 +96,9 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
               final title = _titleController.text;
               final content = _contentController.text;
               final textList = [title, content];
-              final joinedText = textList.join('\n\n');
+              final emptyCheck = title.isNotEmpty && content.isNotEmpty;
+              final joinedText =
+                  emptyCheck ? textList.join('\n\n') : textList.join();
               if (title.isEmpty && content.isEmpty) {
                 Fluttertoast.showToast(
                     msg: 'Cannot share empty note',
