@@ -1,10 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zynotes/constants/routes.dart';
+import 'package:zynotes/services/auth/bloc/auth_bloc.dart';
+import 'package:zynotes/services/auth/bloc/auth_event.dart';
 import 'package:zynotes/utilities/dialogs/error_dialog.dart';
 import 'package:zynotes/utilities/progress_indicator.dart';
-import 'package:zynotes/services/auth/auth_service.dart';
 import 'package:zynotes/services/auth/auth_exceptions.dart';
 
 class LoginView extends StatefulWidget {
@@ -123,22 +125,11 @@ class _LoginViewState extends State<LoginView> {
                             child: ActivityIndicator.indicator,
                           ));
                   try {
-                    await AuthService.firebase().signIn(
-                      email: email,
-                      password: password,
-                    );
-                    final user = AuthService.firebase().currentUser;
-                    if (user?.isEmailVerified ?? false) {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        homePage,
-                        (route) => false,
-                      );
-                    } else {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                        verifyEmail,
-                        (route) => false,
-                      );
-                    }
+                    context.read<AuthBloc>().add(AuthEventLogin(
+                          email: email,
+                          password: password,
+                        ));
+                    Navigator.of(context).pop();
                   } on UserNotFoundAuthException {
                     await showErrorDialog(
                       context,

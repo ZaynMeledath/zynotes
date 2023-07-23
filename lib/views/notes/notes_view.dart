@@ -1,9 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zynotes/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:zynotes/constants/routes.dart';
 import 'package:zynotes/enums/menu_action.dart';
+import 'package:zynotes/services/auth/bloc/auth_bloc.dart';
+import 'package:zynotes/services/auth/bloc/auth_event.dart';
 import 'package:zynotes/services/cloud/cloud_notes.dart';
 import 'package:zynotes/services/cloud/firebase_cloud_storage.dart';
 import 'package:zynotes/utilities/dialogs/logout_dialog.dart';
@@ -55,10 +58,8 @@ class _NotesViewState extends State<NotesView> {
                       context: context,
                       builder: (context) => ActivityIndicator.indicator,
                     );
-                    await AuthService.firebase().signOut();
+                    context.read<AuthBloc>().add(const AuthEventLogout());
                     Navigator.of(context).pop();
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil(loginView, (route) => false);
                   }
               }
             })

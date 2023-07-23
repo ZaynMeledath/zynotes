@@ -64,7 +64,7 @@ class _GuestViewState extends State<GuestView> {
                 ),
               ),
             ]),
-            const SizedBox(height: 145),
+            const SizedBox(height: 115),
             const Text(
               'WELCOME TO ZYNOTES',
               style: TextStyle(fontSize: 29, fontWeight: FontWeight.w500),
@@ -96,22 +96,6 @@ class _GuestViewState extends State<GuestView> {
                   ),
                 ),
               ),
-            ),
-            const Expanded(
-              child: SizedBox(),
-            ),
-            Container(
-              width: screenWidth,
-              height: screenHeight * .11,
-              decoration: const BoxDecoration(
-                  gradient: LinearGradient(colors: [
-                    Colors.lightBlueAccent,
-                    Colors.white,
-                  ]),
-                  // color: Color.fromARGB(141, 73, 73, 73),
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(200),
-                      topRight: Radius.circular(200))),
             ),
           ],
         ),
